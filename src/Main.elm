@@ -101,12 +101,16 @@ view model =
     , body =
         [ B.viewNavbar model.user
         , div [ class "container" ]
-            [ h2 [ class "text-center" ] [ text "Welcome" ]
-            , div [ class "jumbotron text-left" ]
+            [ div [ class "jumbotron text-left" ]
                 [ -- Login/Register form or user greeting
-                  A.authBoxView model.user model.errorMsg,
-                  EV.viewEntryCards model.entries
-                ]
+                  A.authBoxView model.user model.errorMsg
+                  
+                ],
+            div [class "row"] [
+                EV.viewEntryCards model.entries,
+                EV.viewEntriesSidebar model.entries
+            ]
+
             ]
          , B.viewFooter
       ]

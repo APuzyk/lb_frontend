@@ -34,3 +34,23 @@ viewEntryCard entry =
             a [href ("entry/delete/" ++ entry.id), class "btn btn-secondary"] [text "Delete"]
         ]
     ]
+
+viewEntriesSidebar : Entries -> Html Msg
+viewEntriesSidebar entries = 
+    let
+        entriesList = entries.entries
+    in
+        div [class "col-md-4 float-right"] [
+            div [class "card my-4"] [
+                h5 [class "card-header"] [text "Entries"],
+                Keyed.node "div" [class "card-body"] (List.map viewKeyedEntrySidebar entriesList)
+            ]
+        ]
+
+viewKeyedEntrySidebar : Entry -> (String, Html Msg)
+viewKeyedEntrySidebar entry =
+    (entry.id, lazy viewEntrySidebar entry)
+
+viewEntrySidebar : Entry -> Html Msg
+viewEntrySidebar entry = 
+    a [href ("entry/" ++ entry.id)][text ((String.slice 0 9 entry.created_on) ++ " " ++ entry.title)]
