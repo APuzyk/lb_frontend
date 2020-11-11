@@ -97,24 +97,27 @@ subscriptions _ =
 -- VIEW
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Leatherbound"
-    , body =
-        [ B.viewNavbar model.user
-        , div [ class "container" ]
-            [ div [ class "jumbotron text-left" ]
-                [ -- Login/Register form or user greeting
-                  A.authBoxView model.user model.errorMsg
-                  
-                ],
-            div [class "row"] [
-                EV.viewEntryCards model.entries,
-                EV.viewEntriesSidebar model.entries
-            ]
+    let
+        user = model.user
 
+    in
+        if user.accessToken == "" then
+            A.viewAuth model
+        else
+            { title = "Leatherbound"
+            , body =
+                [ B.viewNavbar model.user
+                , div [ class "container-fluid" ]
+                    [
+                        div [class "row"] [
+                        EV.viewEntriesSidebar model.entries,
+                        EV.viewEntryCards model.entries
+                        
+                    ]   
+                    ]
+                , B.viewFooter
             ]
-         , B.viewFooter
-      ]
-    }
+            }
 
 updateUrlAction : Model -> Url.Url -> (Model, Cmd Msg)
 updateUrlAction model url =

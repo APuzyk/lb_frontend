@@ -24,7 +24,7 @@ viewKeyedEntryCard entry =
 
 viewEntryCard : Entry -> Html Msg
 viewEntryCard entry =
-    div [class "card mb-4"] [
+    div [class "card mb-8"] [
         div [class "card-body"] [
             h2 [class "card-title"] [text entry.title],
             p [class "card-text text-muted h6"] [text <| String.concat [entry.author, " | ", entry.created_on]],
@@ -39,9 +39,15 @@ viewEntriesSidebar : Entries -> Html Msg
 viewEntriesSidebar entries = 
     let
         entriesList = entries.entries
+        hide : String
+        hide =
+            if List.length entries.entries == 0 then
+                " d-none"
+            else
+                ""
     in
-        div [class "col-md-4 float-right"] [
-            div [class "card my-4"] [
+        div [class ("col-md-3" ++ hide)] [
+            div [class "card my-3"] [
                 h5 [class "card-header"] [text "Entries"],
                 Keyed.node "div" [class "card-body"] (List.map viewKeyedEntrySidebar entriesList)
             ]
@@ -53,4 +59,4 @@ viewKeyedEntrySidebar entry =
 
 viewEntrySidebar : Entry -> Html Msg
 viewEntrySidebar entry = 
-    a [href ("entry/" ++ entry.id)][text ((String.slice 0 9 entry.created_on) ++ " " ++ entry.title)]
+    div [][a [href ("entry/" ++ entry.id)][text ((String.slice 0 10 entry.created_on) ++ " " ++ entry.title)]]

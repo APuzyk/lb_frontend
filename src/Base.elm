@@ -55,5 +55,5 @@ viewFooter : Html msg
 viewFooter =
     footer [ class "py-3 bg-grey" ]
         [ 
-            p [ class "m-0 text-dark text-center " ] [ text "Copyright &copy; Leatherbound" ]
+            p [ class "m-0 text-dark text-center " ] [ text ("Copyright " ++ (String.fromChar (Char.fromCode 169)) ++ " Leatherbound")]
         ]

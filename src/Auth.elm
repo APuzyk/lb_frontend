@@ -1,6 +1,7 @@
 module Auth exposing (..)
 
 import Html exposing (..)
+
 import Html.Attributes exposing (..)
 import User exposing (User, userEncoder)
 import Types exposing (..)
@@ -12,6 +13,9 @@ import Urls exposing (registerUrl)
 import Url.Builder as Builder
 import Url
 import Browser.Navigation as Nav
+import Browser
+import Base as B
+
 
 
 
@@ -85,7 +89,20 @@ httpErrorToString error =
         Http.BadBody errorMessage ->
             errorMessage
 
-
+viewAuth : Model -> Browser.Document Msg
+viewAuth model =
+    { title = "Leatherbound"
+    , body =
+        [ B.viewNavbar model.user
+        , div [ class "container-fluid" ]
+            [
+                div [class "row justify-content-center"] [
+                    authBoxView model.user model.errorMsg
+                ]
+            ]
+        , B.viewFooter
+        ]
+    }
 authBoxView : User -> String -> Html Msg
 authBoxView user errorMsg =
     let
@@ -103,28 +120,29 @@ authBoxView user errorMsg =
                     if String.length user.accessToken > 0 then
                         "d-none"
                     else
-                        ""
+                        "col-4 justify-content-center"
+                colMain = "col-md-8 col-md-offset-6"
+                colEntries = "col-md-offset-8 col-md-4"
     in
         div [ id "form", class loggedIn ] [ 
-            h2 [ class "text-center" ] [ text "Log In or Register" ],
-            p [ class "help-block" ] [ text "If you already have an account, please Log In. Otherwise, enter your desired username and password and Register." ],
+            h2 [ class "text-center" ] [ text "Log In" ],
             div [ class showError ] [ 
                 div [ class "alert alert-danger" ] [ text errorMsg ]
             ], 
-            div [ class "form-group row" ] [
-                div [ class "col-md-offset-2 col-md-8" ] [ 
-                    label [ for "username" ] [ text "Username:" ],
-                    input [ id "username", type_ "text", class "form-control", Html.Attributes.value user.username, onInput SetUsername ] []
-                ]
+            div [ class "form-group row justify-content-center" ] [
+                    input [ id "username", 
+                            type_ "text", 
+                            class "form-control", 
+                            placeholder "Username",
+                            Html.Attributes.value user.username, 
+                            onInput SetUsername ] []
             ], 
-            div [ class "form-group row" ] [
-                div [ class "col-md-offset-2 col-md-8" ] [ 
-                    label [ for "password" ] [ text "Password:" ],
+            div [ class "form-group row justify-content-center" ] [
                     input [ id "password", 
                             type_ "password", 
-                            class "form-control", 
+                            class "form-control",
+                            placeholder "Password",
                             Html.Attributes.value user.password, onInput SetPassword ] []
-                ]
             ], 
             div [ class "text-center" ] [ 
                 button [ class "btn btn-link", onClick ClickRegisterUser ] [ text "Login" ]
