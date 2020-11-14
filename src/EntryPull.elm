@@ -5,11 +5,13 @@ import Http
 import Jwt.Http
 import Urls exposing (entriesUrl)
 import Json.Decode as D exposing (..)
-import Entry exposing (Entry, Entries)
+import Entry exposing (Entry, Entries, TmpEntryList)
 import Auth exposing (httpErrorToString)
+import Dict exposing (Dict)
 
 
-getEntriesCompleted :  Model -> Result Http.Error Entries -> ( Model, Cmd Msg )
+    
+getEntriesCompleted :  Model -> Result Http.Error TmpEntryList -> ( Model, Cmd Msg )
 getEntriesCompleted model result =
     case result of
         Ok entries ->
@@ -17,7 +19,7 @@ getEntriesCompleted model result =
                 oldEntries = model.entries
                 newEntries = {oldEntries 
                                 | next_page = entries.next_page, 
-                                  entries = oldEntries.entries ++ entries.entries
+                                  entries = addEntries oldEntries.entries entries.entries
                             }
             in
                 ( 
@@ -37,9 +39,10 @@ getEntries model =
             { url = entriesUrl
             , expect = Http.expectJson T.GotEntries entriesDecoder}
 
-entriesDecoder : Decoder Entries
+
+entriesDecoder : Decoder TmpEntryList
 entriesDecoder = 
-    map2 Entries
+    map2 TmpEntryList
         (field "next" string)
         (field "results" listOfEntriesDecoder)
 
@@ -57,3 +60,15 @@ entryDecoder =
         (field "updated_on" string)
         (field "content" string)
         (field "created_on" string)
+
+addEntries : Dict String Entry -> List Entry -> Dict String Entry
+addEntries oldEntryDict newEntries = 
+    Dict.union (genEntriesDict newEntries)  oldEntryDict
+
+genEntriesDict : List Entry -> Dict String Entry
+genEntriesDict entries = 
+    Dict.fromList (List.map genEntryKV entries)
+
+genEntryKV : Entry -> (String, Entry)
+genEntryKV entry = 
+    (entry.created_on ++ "_" ++ entry.id, entry)

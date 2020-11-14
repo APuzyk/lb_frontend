@@ -8,6 +8,7 @@ import Html.Lazy exposing (lazy)
 import Html exposing (..)
 import String
 import List
+import Dict exposing (Dict)
 
 type alias Entry =
     { id: EntryId
@@ -22,6 +23,11 @@ type alias EntryId = String
 
 type alias Entries = 
     { next_page: String
-    , entries: List Entry
+    , entries: Dict String Entry
+    }
+
+type alias TmpEntryList =
+    { next_page : String
+    , entries : List Entry
     }
 

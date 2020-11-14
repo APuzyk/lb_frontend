@@ -19,3 +19,6 @@ entriesUrl =
         apiUrl ++ "entry/"
 
 
+basePath : String
+basePath = 
+    "http://localhost:8000"

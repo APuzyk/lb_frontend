@@ -6,7 +6,9 @@ import User as U
 import Entry as E
 import Browser
 import Http
+import Entry exposing (Entry)
 
+import Url.Parser exposing (Parser, (</>), int, map, oneOf, s, string)
 
 
 -- MODEL
@@ -16,6 +18,7 @@ type alias Model =
   , user: U.User
   , errorMsg: String
   , entries: E.Entries
+  , activeEntry: Maybe Entry
   }
 
 type Msg
@@ -25,9 +28,17 @@ type Msg
   | SetPassword String
   | ClickRegisterUser
   | GotToken (Result Http.Error TokenStrings)
-  | GotEntries (Result Http.Error E.Entries)
+  | GotEntries (Result Http.Error E.TmpEntryList)
 
 type alias TokenStrings =
     { refreshToken : String
     , accessToken : String
     }
+
+type Route
+    = EntryRoute String String
+
+routeParser : Parser (Route -> a) a
+routeParser =
+    oneOf
+        [map EntryRoute (s "entry" </> string </> string)]

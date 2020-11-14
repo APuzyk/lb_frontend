@@ -10,7 +10,6 @@ import Url
 import Base as B
 import Json.Decode as Decode exposing (..)
 import Json.Encode as Encode exposing (..)
-import Html.Events exposing (onClick)
 import User as U
 import EntryView as EV
 import Urls exposing (api, registerUrl)
@@ -19,6 +18,9 @@ import Types as T
 import Auth as A
 import Entry exposing (Entries)
 import EntryPull as EP
+import Dict
+import Url.Parser as UrlParser
+
 
 
 
@@ -38,9 +40,9 @@ init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
   let
     newUser = U.User "" "" "" ""
-    entries = Entries "" []
+    entries = Entries "" Dict.empty
   in
-    ( Model key url newUser "" entries, Cmd.none )
+    ( Model key url newUser "" entries Nothing, Cmd.none )
 
 
 
@@ -84,6 +86,7 @@ update msg model =
     
     T.GotEntries result ->
         EP.getEntriesCompleted model result
+    
 
 -- SUBSCRIPTIONS
 
@@ -104,23 +107,54 @@ view model =
         if user.accessToken == "" then
             A.viewAuth model
         else
-            { title = "Leatherbound"
-            , body =
-                [ B.viewNavbar model.user
-                , div [ class "container-fluid" ]
-                    [
-                        div [class "row"] [
-                        EV.viewEntriesSidebar model.entries,
-                        EV.viewEntryCards model.entries
-                        
-                    ]   
-                    ]
-                , B.viewFooter
-            ]
-            }
+            viewEntries model
 
 updateUrlAction : Model -> Url.Url -> (Model, Cmd Msg)
 updateUrlAction model url =
-    case url.path of
-        "/"-> (model, EP.getEntries model)
-        _ -> ( model, Cmd.none ) 
+    let
+        entries = model.entries
+    in
+        case UrlParser.parse T.routeParser url of
+            Nothing -> ({model | activeEntry = Nothing} , EP.getEntries model)
+            Just (T.EntryRoute created_on uuid) -> ( {model | activeEntry = (Dict.get (created_on ++ "_" ++ uuid) entries.entries)} , Cmd.none )
+
+
+
+
+        
+
+
+viewEntries : Model -> Browser.Document Msg
+viewEntries model = 
+    case model.activeEntry of
+        Nothing -> 
+            { title = "Leatherbound"
+                    , body =
+                        [ B.viewNavbar model.user
+                        , div [ class "container-fluid" ]
+                            [
+                                div [class "row"] [
+                                EV.viewEntriesSidebar model.entries,
+                                EV.viewEntryCards model.entries
+                                
+                            ]   
+                            ]
+                        , B.viewFooter
+                    ]
+            }
+        Just entry ->
+            { title = "Leatherbound"
+                    , body =
+                        [ B.viewNavbar model.user
+                        , div [ class "container-fluid" ]
+                            [
+                                div [class "row"] [
+                                EV.viewEntriesSidebar model.entries,
+                                EV.viewSingleEntry entry
+                            ]   
+                            ]
+                        , B.viewFooter
+                    ]
+            }
+
+
