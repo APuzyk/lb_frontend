@@ -94,3 +94,21 @@ viewSingleEntry entry =
         ]
     ]
 
+viewEditableEntry : Entry -> Html Msg
+viewEditableEntry entry =
+        div [class "col-md-8 mt-3 left"] [
+        div [class "card-body", id "form"] [
+            h1 [class "card-title"] [text entry.title],
+            p [class "text-muted"] [text (entry.author ++ " | " ++ (String.slice 0 10 entry.created_on))],
+            div [class "form-group"][
+                textarea [
+                    style "min-width" "100%",
+                    value entry.content,
+                    Html.Events.onInput Types.UpdateEntryContent
+                    ][]
+                ],
+            a [href (getEntryEditHref entry), class "btn btn-secondary"] [text "Save"],
+            a [href (getEntryHref entry), class "btn btn-secondary"] [text "Cancel"]
+        ]
+    ]
+

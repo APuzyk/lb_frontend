@@ -24,6 +24,8 @@ type alias EntryId = String
 type alias Entries = 
     { next_page: String
     , entries: Dict String Entry
+    , activeEntry: Maybe Entry
+    , editable: Bool
     }
 
 type alias TmpEntryList =

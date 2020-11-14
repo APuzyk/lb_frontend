@@ -142,7 +142,8 @@ authBoxView user errorMsg =
                             type_ "password", 
                             class "form-control",
                             placeholder "Password",
-                            Html.Attributes.value user.password, onInput SetPassword ] []
+                            Html.Attributes.value user.password, 
+                            onInput SetPassword ] []
             ], 
             div [ class "text-center" ] [ 
                 button [ class "btn btn-link", onClick ClickRegisterUser ] [ text "Login" ]

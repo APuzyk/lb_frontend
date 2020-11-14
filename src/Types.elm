@@ -18,7 +18,6 @@ type alias Model =
   , user: U.User
   , errorMsg: String
   , entries: E.Entries
-  , activeEntry: Maybe Entry
   }
 
 type Msg
@@ -29,6 +28,7 @@ type Msg
   | ClickRegisterUser
   | GotToken (Result Http.Error TokenStrings)
   | GotEntries (Result Http.Error E.TmpEntryList)
+  | UpdateEntryContent String
 
 type alias TokenStrings =
     { refreshToken : String
@@ -37,8 +37,11 @@ type alias TokenStrings =
 
 type Route
     = EntryRoute String String
+    | EditEntryRoute String String
 
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
-        [map EntryRoute (s "entry" </> string </> string)]
+        [ map EditEntryRoute (s "entry" </> s "edit" </> string </> string)
+        , map EntryRoute (s "entry" </> string </> string)
+        ]
