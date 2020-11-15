@@ -113,3 +113,24 @@ viewEditableEntry entry =
         ]
     ]
 
+viewCreateEntry : Html Msg
+viewCreateEntry =
+        div [class "col-md-8 mt-3 left"] [
+        div [class "card-body", id "form"] [
+            input [
+                class "card-title", 
+                style "min-width" "50%", 
+                placeholder "Title",
+                Html.Events.onInput Types.UpdateEntryTitle
+            ] [],
+            div [class "form-group"][
+                textarea [
+                    style "min-width" "100%",
+                    placeholder "Your journal entry",
+                    Html.Events.onInput Types.UpdateEntryContent
+                    ][]
+                ],
+            button [Html.Events.onClick Types.ClickCreateEntry, class "btn btn-secondary"] [text "Save"],
+            a [href (basePath), class "btn btn-secondary"] [text "Cancel"]
+        ]
+    ]

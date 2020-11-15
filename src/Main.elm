@@ -22,6 +22,7 @@ import Dict
 import Url.Parser as UrlParser
 import EntryUpdate as EU
 import EntryDelete as ED
+import EntryCreate as EC
 
 
 
@@ -137,6 +138,20 @@ update msg model =
     
     T.DeletedEntry result ->
         ED.deletedEntryCompleted model result
+    
+    T.ClickCreateEntry ->
+        let
+            entries = model.entries
+            activeEntry = entries.activeEntry
+        in
+            case activeEntry of
+                Just entry ->
+                    (model, EC.createEntry model entry)
+                Nothing ->
+                    (model, Cmd.none)
+    
+    T.CreatedEntry result ->
+        EU.patchedEntryCompleted model result
 
 
 -- SUBSCRIPTIONS
@@ -172,6 +187,8 @@ updateUrlAction model url =
                 ( {model | entries = updateActiveEntry created_on uuid model.entries} , Cmd.none )
             Just (T.EditEntryRoute created_on uuid) -> 
                 ( {model | entries = updateEditActiveEntry created_on uuid model.entries} , Cmd.none )
+            Just T.CreateEntryRoute ->
+                ( {model | entries = addEmtpyActiveEntry model.entries }, Cmd.none )
 
 removeActiveEntry : Entries -> Entries
 removeActiveEntry entries =
@@ -188,7 +205,11 @@ updateEditActiveEntry created_on uuid entries =
     in
         case activeEntry of
             Nothing -> {entries | activeEntry = Nothing, editable = False }
-            Just entry -> {entries | activeEntry = Just entry, editable = Debug.log "editable" True} 
+            Just entry -> {entries | activeEntry = Just entry, editable = True} 
+
+addEmtpyActiveEntry : Entries -> Entries
+addEmtpyActiveEntry entries =
+    {entries | activeEntry = Just (Entry.Entry "" "" "" "" "" ""), editable = True }
 
         
 
@@ -223,10 +244,13 @@ viewEntries model =
                             [
                                 div [class "row"] [
                                 EV.viewEntriesSidebar model.entries,
-                                if entries.editable then
-                                    EV.viewEditableEntry entry
-                                else    
-                                    EV.viewSingleEntry entry
+                                if entry.id == "" then
+                                    EV.viewCreateEntry
+                                else
+                                    if entries.editable then
+                                        EV.viewEditableEntry entry
+                                    else    
+                                        EV.viewSingleEntry entry
                             ]   
                             ]
                         , B.viewFooter

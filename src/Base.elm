@@ -4,10 +4,12 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import User exposing (User)
 import Json.Decode exposing (bool)
+import Urls
+import Urls exposing (basePath)
 
 createEntryUrl : String
 createEntryUrl = 
-    "/create_entry"
+    basePath ++ "/write_entry"
 
 
 viewNavbar : User -> Html msg
@@ -22,7 +24,7 @@ viewNavbar user =
     in
         nav [ class "navbar navbar-expand-lg navbar-light bg-light shadow" ] [
             div [class "container-fluid" ] [
-                a [ class "navbar-brand", href "" ] [ text "My Journal" ],
+                a [ class "navbar-brand", href basePath ] [ text "My Journal" ],
                 a [ class userElementClasses, href createEntryUrl ] [ text "Write Entry" ]
             ]
         ]

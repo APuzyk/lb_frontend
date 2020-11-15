@@ -34,6 +34,8 @@ type Msg
   | PatchedEntry (Result Http.Error Entry)
   | ClickDeleteEntry
   | DeletedEntry (Result Http.Error ())
+  | ClickCreateEntry
+  | CreatedEntry (Result Http.Error Entry)
 
 type alias TokenStrings =
     { refreshToken : String
@@ -43,10 +45,12 @@ type alias TokenStrings =
 type Route
     = EntryRoute String String
     | EditEntryRoute String String
+    | CreateEntryRoute
 
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
         [ map EditEntryRoute (s "entry" </> s "edit" </> string </> string)
         , map EntryRoute (s "entry" </> string </> string)
+        , map CreateEntryRoute (s "write_entry")
         ]
