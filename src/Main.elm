@@ -20,6 +20,7 @@ import Entry exposing (Entries)
 import EntryPull as EP
 import Dict
 import Url.Parser as UrlParser
+import EntryUpdate as EU
 
 
 
@@ -97,6 +98,30 @@ update msg model =
                     ( { model | entries = { entries | activeEntry = Just {entry | content = content}}}, Cmd.none)
                 Nothing ->
                     (model, Cmd.none)
+    
+    T.UpdateEntryTitle title ->
+        let
+            entries = model.entries
+            activeEntry = entries.activeEntry
+        in
+            case activeEntry of
+                Just entry ->
+                    ({ model | entries = { entries | activeEntry = Just {entry | title = title}}}, Cmd.none)
+                Nothing ->
+                    (model, Cmd.none)
+    T.ClickSaveEntry ->
+        let
+            entries = model.entries
+            activeEntry = entries.activeEntry
+        in
+            case activeEntry of
+                Just entry ->
+                    ( model, EU.updateEntry model entry )
+                Nothing ->
+                    (model, Cmd.none)
+
+    T.PatchedEntry result ->
+        EU.patchedEntryCompleted model result
 
 
 -- SUBSCRIPTIONS

@@ -72,7 +72,7 @@ viewEntrySidebar entry =
 
 getEntryHref : Entry -> String
 getEntryHref entry = 
-    basePath ++ "/entry/" ++ entry.created_on ++ "/" ++ entry.id
+    basePath ++ "/entry/" ++ entry.created_on ++ "/" ++ entry.id ++ "/"
 
 getEntryEditHref : Entry -> String
 getEntryEditHref entry = 
@@ -98,7 +98,12 @@ viewEditableEntry : Entry -> Html Msg
 viewEditableEntry entry =
         div [class "col-md-8 mt-3 left"] [
         div [class "card-body", id "form"] [
-            h1 [class "card-title"] [text entry.title],
+            input [
+                class "card-title", 
+                style "min-width" "50%", 
+                value entry.title,
+                Html.Events.onInput Types.UpdateEntryTitle
+            ] [],
             p [class "text-muted"] [text (entry.author ++ " | " ++ (String.slice 0 10 entry.created_on))],
             div [class "form-group"][
                 textarea [
@@ -107,7 +112,7 @@ viewEditableEntry entry =
                     Html.Events.onInput Types.UpdateEntryContent
                     ][]
                 ],
-            a [href (getEntryEditHref entry), class "btn btn-secondary"] [text "Save"],
+            button [Html.Events.onClick Types.ClickSaveEntry, class "btn btn-secondary"] [text "Save"],
             a [href (getEntryHref entry), class "btn btn-secondary"] [text "Cancel"]
         ]
     ]

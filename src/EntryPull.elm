@@ -72,3 +72,7 @@ genEntriesDict entries =
 genEntryKV : Entry -> (String, Entry)
 genEntryKV entry = 
     (entry.created_on ++ "_" ++ entry.id, entry)
+
+genEntryKey : Entry -> String
+genEntryKey entry = 
+    entry.created_on ++ "_" ++ entry.id

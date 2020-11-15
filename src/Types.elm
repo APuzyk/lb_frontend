@@ -29,6 +29,9 @@ type Msg
   | GotToken (Result Http.Error TokenStrings)
   | GotEntries (Result Http.Error E.TmpEntryList)
   | UpdateEntryContent String
+  | UpdateEntryTitle String
+  | ClickSaveEntry
+  | PatchedEntry (Result Http.Error Entry)
 
 type alias TokenStrings =
     { refreshToken : String
