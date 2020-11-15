@@ -32,6 +32,8 @@ type Msg
   | UpdateEntryTitle String
   | ClickSaveEntry
   | PatchedEntry (Result Http.Error Entry)
+  | ClickDeleteEntry
+  | DeletedEntry (Result Http.Error ())
 
 type alias TokenStrings =
     { refreshToken : String

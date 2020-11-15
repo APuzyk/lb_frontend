@@ -21,6 +21,7 @@ import EntryPull as EP
 import Dict
 import Url.Parser as UrlParser
 import EntryUpdate as EU
+import EntryDelete as ED
 
 
 
@@ -122,6 +123,20 @@ update msg model =
 
     T.PatchedEntry result ->
         EU.patchedEntryCompleted model result
+    
+    T.ClickDeleteEntry ->
+        let
+            entries = model.entries
+            activeEntry = entries.activeEntry
+        in
+            case activeEntry of
+                Just entry ->
+                    ( model, ED.deleteEntry model entry )
+                Nothing ->
+                    (model, Cmd.none)
+    
+    T.DeletedEntry result ->
+        ED.deletedEntryCompleted model result
 
 
 -- SUBSCRIPTIONS

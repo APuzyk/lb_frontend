@@ -39,7 +39,7 @@ viewEntryCard entry =
             p [class "card-text"] [text <| String.slice 0 199 entry.content],
             a [href (getEntryHref entry), class "btn btn-secondary"] [text "Read More"],
             a [href (getEntryEditHref entry), class "btn btn-secondary"] [text "Edit"],
-            a [href (getEntryDeleteHref entry), class "btn btn-secondary"] [text "Delete"]
+            button [Html.Events.onClick Types.ClickDeleteEntry, class "btn btn-secondary"] [text "Delete"]
         ]
     ]
 
@@ -78,10 +78,6 @@ getEntryEditHref : Entry -> String
 getEntryEditHref entry = 
     basePath ++ "/entry/edit/" ++ entry.created_on ++ "/" ++ entry.id
 
-getEntryDeleteHref : Entry -> String
-getEntryDeleteHref entry = 
-    basePath ++ "/entry/delete/" ++ entry.created_on ++ "/" ++ entry.id
-
 viewSingleEntry : Entry -> Html Msg
 viewSingleEntry entry = 
     div [class "col-md-8 mt-3 left"] [
@@ -90,7 +86,7 @@ viewSingleEntry entry =
             p [class "text-muted"] [text (entry.author ++ " | " ++ (String.slice 0 10 entry.created_on))],
             p [class "card-text"] [text entry.content],
             a [href (getEntryEditHref entry), class "btn btn-secondary"] [text "Edit"],
-            a [href (getEntryDeleteHref entry), class "btn btn-secondary"] [text "Delete"]
+            button [Html.Events.onClick Types.ClickDeleteEntry, class "btn btn-secondary"] [text "Delete"]
         ]
     ]
 
