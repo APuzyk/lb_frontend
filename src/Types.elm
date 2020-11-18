@@ -25,6 +25,7 @@ type Msg
   | UrlChanged Url.Url
   | SetUsername String
   | SetPassword String
+  | SetPasswordAgain String
   | ClickRegisterUser
   | GotToken (Result Http.Error TokenStrings)
   | GotEntries (Result Http.Error E.TmpEntryList)
@@ -36,6 +37,8 @@ type Msg
   | DeletedEntry (Result Http.Error ())
   | ClickCreateEntry
   | CreatedEntry (Result Http.Error Entry)
+  | ClickCreateUser
+  | CreatedUser (Result Http.Error {id: Int, username: String})
 
 type alias TokenStrings =
     { refreshToken : String
@@ -46,6 +49,7 @@ type Route
     = EntryRoute String String
     | EditEntryRoute String String
     | CreateEntryRoute
+    | CreateUserRoute
 
 routeParser : Parser (Route -> a) a
 routeParser =
@@ -53,4 +57,5 @@ routeParser =
         [ map EditEntryRoute (s "entry" </> s "edit" </> string </> string)
         , map EntryRoute (s "entry" </> string </> string)
         , map CreateEntryRoute (s "write_entry")
+        , map CreateUserRoute (s "register")
         ]

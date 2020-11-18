@@ -23,6 +23,7 @@ import Url.Parser as UrlParser
 import EntryUpdate as EU
 import EntryDelete as ED
 import EntryCreate as EC
+import UserCreate as UC
 
 
 
@@ -42,7 +43,7 @@ main =
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
   let
-    newUser = U.User "" "" "" ""
+    newUser = U.User "" "" "" "" ""
     entries = Entries "" Dict.empty Nothing False
   in
     ( Model key url newUser "" entries, Cmd.none )
@@ -80,6 +81,12 @@ update msg model =
             newUser = { oldUser | password = password }
         in
             ( { model | user = newUser }, Cmd.none )
+    T.SetPasswordAgain passwordAgain ->
+        let
+            oldUser = model.user
+            newUser = { oldUser | passwordAgain = passwordAgain}
+        in
+            ({model | user = newUser}, Cmd.none)
 
     T.ClickRegisterUser ->
         ( model, A.authUser model )
@@ -152,6 +159,12 @@ update msg model =
     
     T.CreatedEntry result ->
         EU.patchedEntryCompleted model result
+    
+    T.ClickCreateUser ->
+        (model, UC.createUser model)
+    
+    T.CreatedUser result ->
+        UC.createdUserCompleted model result
 
 
 -- SUBSCRIPTIONS
@@ -170,10 +183,13 @@ view model =
         user = model.user
 
     in
-        if user.accessToken == "" then
-            A.viewAuth model
-        else
-            viewEntries model
+        case user.accessToken of
+            "" ->
+                A.viewAuth model
+            "reg" ->
+                UC.viewCreateUser model
+            _ ->
+                viewEntries model
 
 updateUrlAction : Model -> Url.Url -> (Model, Cmd Msg)
 updateUrlAction model url =
@@ -189,6 +205,11 @@ updateUrlAction model url =
                 ( {model | entries = updateEditActiveEntry created_on uuid model.entries} , Cmd.none )
             Just T.CreateEntryRoute ->
                 ( {model | entries = addEmtpyActiveEntry model.entries }, Cmd.none )
+            Just T.CreateUserRoute ->
+                let
+                    user = model.user
+                in
+                ( { model | user = {user | accessToken = "reg"}}, Cmd.none)
 
 removeActiveEntry : Entries -> Entries
 removeActiveEntry entries =

@@ -15,6 +15,7 @@ import Url
 import Browser.Navigation as Nav
 import Browser
 import Base as B
+import Urls exposing (createUserUrl, basePath)
 
 
 
@@ -147,5 +148,8 @@ authBoxView user errorMsg =
             ], 
             div [ class "text-center" ] [ 
                 button [ class "btn btn-link", onClick ClickRegisterUser ] [ text "Login" ]
+                ],
+            div [ class "text-center" ] [ 
+                a [ class "btn btn-link", href (basePath ++ "/register/") ] [ text "Register" ]
                 ]
             ]

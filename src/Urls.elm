@@ -11,6 +11,12 @@ registerUrl =
     in
         apiUrl ++ "api/token/"
 
+createUserUrl : String
+createUserUrl =
+    let
+        apiUrl = api
+    in
+        apiUrl ++ "register/"
 entriesUrl : String
 entriesUrl =
     let

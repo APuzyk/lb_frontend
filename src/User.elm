@@ -11,6 +11,7 @@ type alias User =
     , password: String
     , accessToken: String
     , refreshToken: String
+    , passwordAgain: String
     }
 
 
