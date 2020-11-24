@@ -21,7 +21,7 @@ updateEntry model entry =
                 |> patchEntryEncoder
                 |> Http.jsonBody
         
-        apiUrl = Urls.api ++ "entry/" ++ entry.id ++ "/"
+        apiUrl = (Urls.api model.url) ++ "entry/" ++ entry.id ++ "/"
         
     in
         HttpH.patch 
@@ -49,7 +49,7 @@ patchedEntryCompleted model result =
                                         editable = False } 
             in
                 ( { model | entries = newEntries, errorMsg = "" }, 
-                Nav.pushUrl model.key  (getEntryHref entry))
+                Nav.pushUrl model.key  (getEntryHref model.url entry))
         
         Err error ->
             ( { model | errorMsg = (httpErrorToString error) }, Cmd.none )

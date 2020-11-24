@@ -238,44 +238,43 @@ addEmtpyActiveEntry entries =
 viewEntries : Model -> Browser.Document Msg
 viewEntries model = 
     let
-        entries = model.entries    
+        entries = model.entries
     in
-    
-    case entries.activeEntry of
-        Nothing -> 
-            { title = "Leatherbound"
-                    , body =
-                        [ B.viewNavbar model.user
-                        , div [ class "container-fluid" ]
-                            [
-                                div [class "row"] [
-                                EV.viewEntriesSidebar model.entries,
-                                EV.viewEntryCards model.entries
-                                
-                            ]   
-                            ]
-                        , B.viewFooter
-                    ]
-            }
-        Just entry ->
-            { title = "Leatherbound"
-                    , body =
-                        [ B.viewNavbar model.user
-                        , div [ class "container-fluid" ]
-                            [
-                                div [class "row"] [
-                                EV.viewEntriesSidebar model.entries,
-                                if entry.id == "" then
-                                    EV.viewCreateEntry
-                                else
-                                    if entries.editable then
-                                        EV.viewEditableEntry entry
-                                    else    
-                                        EV.viewSingleEntry entry
-                            ]   
-                            ]
-                        , B.viewFooter
-                    ]
-            }
+        case entries.activeEntry of
+            Nothing -> 
+                { title = "Leatherbound"
+                        , body =
+                            [ B.viewNavbar model
+                            , div [ class "container-fluid" ]
+                                [
+                                    div [class "row"] [
+                                    EV.viewEntriesSidebar model,
+                                    EV.viewEntryCards model
+                                    
+                                ]   
+                                ]
+                            , B.viewFooter
+                        ]
+                }
+            Just entry ->
+                { title = "Leatherbound"
+                        , body =
+                            [ B.viewNavbar model
+                            , div [ class "container-fluid" ]
+                                [
+                                    div [class "row"] [
+                                    EV.viewEntriesSidebar model,
+                                    if entry.id == "" then
+                                        EV.viewCreateEntry model
+                                    else
+                                        if entries.editable then
+                                            EV.viewEditableEntry model.url entry
+                                        else    
+                                            EV.viewSingleEntry model.url entry
+                                ]   
+                                ]
+                            , B.viewFooter
+                        ]
+                }
 
 

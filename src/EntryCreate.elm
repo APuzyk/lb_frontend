@@ -24,7 +24,7 @@ createEntry model entry =
                 |> EU.patchEntryEncoder
                 |> Http.jsonBody
         
-        apiUrl = Urls.api ++ "entry/"
+        apiUrl = (Urls.api model.url) ++ "entry/"
         
     in
             JwtH.post

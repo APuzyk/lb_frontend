@@ -11,14 +11,14 @@ import Auth exposing (httpErrorToString)
 import Browser.Navigation as Nav
 import Urls
 import Jwt.Http as JHttp
-import Urls exposing (basePath)
+import Urls
 
 deleteEntry : Model -> Entry -> Cmd Msg
 deleteEntry model entry = 
     let
         entries = model.entries
         user = model.user
-        apiUrl = Urls.api ++ "entry/" ++ entry.id ++ "/"
+        apiUrl = (Urls.api model.url) ++ "entry/" ++ entry.id ++ "/"
         
     in
         JHttp.delete
@@ -36,7 +36,7 @@ deletedEntryCompleted model result =
                 newEntries = removeActiveEntry entries
             in
                 ( { model | entries = newEntries, errorMsg = "" }, 
-                Nav.pushUrl model.key (basePath))
+                Nav.pushUrl model.key (Urls.getBasePath model.url))
         
         Err (Http.BadStatus 204) ->
             let
@@ -44,7 +44,7 @@ deletedEntryCompleted model result =
                 newEntries = removeActiveEntry entries
             in
                 ( { model | entries = newEntries, errorMsg = "" },
-                    Nav.pushUrl model.key (basePath))
+                    Nav.pushUrl model.key (Urls.getBasePath model.url))
         
         Err error ->
             ( { model | errorMsg = (httpErrorToString error) }, Cmd.none )

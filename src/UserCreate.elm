@@ -30,7 +30,7 @@ createUser model =
                 |> userEncoder
                 |> Http.jsonBody
         
-        apiUrl = createUserUrl
+        apiUrl = createUserUrl model.url
         
     in
         Http.post 
@@ -76,7 +76,7 @@ viewCreateUser : Model -> Browser.Document Msg
 viewCreateUser model =
     { title = "Leatherbound"
     , body =
-        [ B.viewNavbar model.user
+        [ B.viewNavbar model
         , div [ class "container-fluid" ]
             [
                 div [class "row justify-content-center"] [

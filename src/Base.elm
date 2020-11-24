@@ -5,16 +5,14 @@ import Html.Attributes exposing (..)
 import User exposing (User)
 import Json.Decode exposing (bool)
 import Urls
-import Urls exposing (basePath)
+import Urls exposing (getBasePath, createEntryUrl)
+import Types exposing (Model)
 
-createEntryUrl : String
-createEntryUrl = 
-    basePath ++ "/write_entry"
-
-
-viewNavbar : User -> Html msg
-viewNavbar user = 
-    let 
+viewNavbar : Model -> Html msg
+viewNavbar model = 
+    let
+        user = model.user
+        url = model.url 
         userElementClasses : String
         userElementClasses =
             if String.length user.accessToken > 0 then
@@ -24,8 +22,8 @@ viewNavbar user =
     in
         nav [ class "navbar navbar-expand-lg navbar-light bg-light shadow" ] [
             div [class "container-fluid" ] [
-                a [ class "navbar-brand", href basePath ] [ text "My Journal" ],
-                a [ class userElementClasses, href createEntryUrl ] [ text "Write Entry" ]
+                a [ class "navbar-brand", href (getBasePath url) ] [ text "My Journal" ],
+                a [ class userElementClasses, href (createEntryUrl url) ] [ text "Write Entry" ]
             ]
         ]
 

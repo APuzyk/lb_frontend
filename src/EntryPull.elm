@@ -36,7 +36,7 @@ getEntries model =
         user = model.user
     in
         Jwt.Http.get user.accessToken
-            { url = entriesUrl
+            { url = entriesUrl model.url
             , expect = Http.expectJson T.GotEntries entriesDecoder}
 
 

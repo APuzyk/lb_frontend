@@ -17,18 +17,6 @@
         var app = Elm.Main.init({
             node: document.getElementById("elm-app")
         });
-
-        (function () {
-            var send = XMLHttpRequest.prototype.send,
-                token = $('meta[name=csrf-token]').attr('content');
-            XMLHttpRequest.prototype.send = function (data) {
-                this.setRequestHeader('X-CSRF-Token', token);
-                return send.apply(this, arguments);
-            };
-        }());
-
-
-
     </script>
 </body>
 

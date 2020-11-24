@@ -15,7 +15,7 @@ import Url
 import Browser.Navigation as Nav
 import Browser
 import Base as B
-import Urls exposing (createUserUrl, basePath)
+import Urls exposing (createUserUrl)
 
 
 
@@ -60,7 +60,7 @@ authUser model =
                 |> userEncoder
                 |> Http.jsonBody
         
-        apiUrl = registerUrl
+        apiUrl = registerUrl model.url
         
     in
         Http.post 
@@ -94,36 +94,40 @@ viewAuth : Model -> Browser.Document Msg
 viewAuth model =
     { title = "Leatherbound"
     , body =
-        [ B.viewNavbar model.user
+        [ B.viewNavbar model
         , div [ class "container-fluid" ]
             [
                 div [class "row justify-content-center"] [
-                    authBoxView model.user model.errorMsg
+                    authBoxView model
                 ]
             ]
         , B.viewFooter
         ]
     }
-authBoxView : User -> String -> Html Msg
-authBoxView user errorMsg =
+authBoxView : Model -> Html Msg
+authBoxView model =
     let
     -- If there is an error on authentication, show the error alert
-                showError : String
-                showError =
-                    if String.length errorMsg == 0 then
-                        "d-none"
-                    else
-                        ""
+        user = model.user
+        errorMsg = model.errorMsg
+        url = model.url
+        
+        showError : String
+        showError =
+            if String.length errorMsg == 0 then
+                "d-none"
+            else
+                ""
 
-                -- Greet a logged in user by username
-                loggedIn : String
-                loggedIn =
-                    if String.length user.accessToken > 0 then
-                        "d-none"
-                    else
-                        "col-4 justify-content-center"
-                colMain = "col-md-8 col-md-offset-6"
-                colEntries = "col-md-offset-8 col-md-4"
+        -- Greet a logged in user by username
+        loggedIn : String
+        loggedIn =
+            if String.length user.accessToken > 0 then
+                "d-none"
+            else
+                "col-4 justify-content-center"
+        colMain = "col-md-8 col-md-offset-6"
+        colEntries = "col-md-offset-8 col-md-4"
     in
         div [ id "form", class loggedIn ] [ 
             h2 [ class "text-center" ] [ text "Log In" ],
@@ -150,6 +154,6 @@ authBoxView user errorMsg =
                 button [ class "btn btn-link", onClick ClickRegisterUser ] [ text "Login" ]
                 ],
             div [ class "text-center" ] [ 
-                a [ class "btn btn-link", href (basePath ++ "/register/") ] [ text "Register" ]
+                a [ class "btn btn-link", href (Urls.getRegisterPath url)] [ text "Register" ]
                 ]
             ]
