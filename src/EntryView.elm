@@ -42,7 +42,7 @@ viewEntryCard url entry =
             p [class "card-text"] [text <| String.slice 0 199 entry.content],
             a [href (getEntryHref url entry), class "btn btn-secondary"] [text "Read More"],
             a [href (getEntryEditHref url entry), class "btn btn-secondary"] [text "Edit"],
-            button [Html.Events.onClick Types.ClickDeleteEntry, class "btn btn-secondary"] [text "Delete"]
+            button [Html.Events.onClick <| Types.ClickDeleteEntry entry, class "btn btn-secondary"] [text "Delete"]
         ]
     ]
 
@@ -91,7 +91,7 @@ viewSingleEntry url entry =
             p [class "text-muted"] [text (entry.author ++ " | " ++ (String.slice 0 10 entry.created_on))],
             p [class "card-text"] [text entry.content],
             a [href (getEntryEditHref url entry), class "btn btn-secondary"] [text "Edit"],
-            button [Html.Events.onClick Types.ClickDeleteEntry, class "btn btn-secondary"] [text "Delete"]
+            button [Html.Events.onClick <| Types.ClickDeleteEntry entry, class "btn btn-secondary"] [text "Delete"]
         ]
     ]
 

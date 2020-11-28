@@ -132,16 +132,13 @@ update msg model =
     T.PatchedEntry result ->
         EU.patchedEntryCompleted model result
     
-    T.ClickDeleteEntry ->
+    T.ClickDeleteEntry entry ->
         let
             entries = model.entries
-            activeEntry = entries.activeEntry
+            newEntries = {entries | activeEntry = Just entry }
+            newModel = { model | entries = newEntries }
         in
-            case activeEntry of
-                Just entry ->
-                    ( model, ED.deleteEntry model entry )
-                Nothing ->
-                    (model, Cmd.none)
+            ( newModel , ED.deleteEntry newModel entry )
     
     T.DeletedEntry result ->
         ED.deletedEntryCompleted model result

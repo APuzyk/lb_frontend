@@ -4,9 +4,14 @@ import Url exposing(Protocol, Url)
 import Url exposing (Protocol(..))
 import String exposing (fromInt)
 
+
 api : Url -> String
 api url =
-    (getBasePath url) ++ "/api/"
+    case url.port_ of
+        Just p ->
+            "http://localhost:8010" ++ "/api/"
+        Nothing ->
+            (getBasePath url) ++ "/api/"
 
 registerUrl : Url -> String
 registerUrl url =

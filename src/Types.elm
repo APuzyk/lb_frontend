@@ -33,7 +33,7 @@ type Msg
   | UpdateEntryTitle String
   | ClickSaveEntry
   | PatchedEntry (Result Http.Error Entry)
-  | ClickDeleteEntry
+  | ClickDeleteEntry Entry
   | DeletedEntry (Result Http.Error ())
   | ClickCreateEntry
   | CreatedEntry (Result Http.Error Entry)
