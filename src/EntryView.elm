@@ -1,6 +1,7 @@
 module EntryView exposing (..)
 
 import Jwt.Http 
+import Browser
 import Html.Attributes exposing (..)
 import Http
 import Html.Keyed as Keyed
@@ -16,6 +17,7 @@ import EntryPull exposing (entryDecoder)
 import Urls
 import Types exposing (Model)
 import Url exposing (Url)
+import Base as B
 
 getTimeOrderedEntryList : Entries -> List Entry
 getTimeOrderedEntryList entries =
@@ -139,3 +141,47 @@ viewCreateEntry model =
             a [href (Urls.getBasePath model.url), class "btn btn-secondary"] [text "Cancel"]
         ]
     ]
+
+viewEntries : Model -> Browser.Document Msg
+viewEntries model = 
+    let
+        entries = model.entries
+    in
+        case entries.activeEntry of
+            Nothing -> 
+                { title = "Leatherbound"
+                        , body =
+                            [ B.viewNavbar model
+                            , div [ class "container-fluid" ]
+                                [
+                                    div [class "row"] [
+                                    viewEntriesSidebar model,
+                                    viewEntryCards model
+                                    
+                                ]   
+                                ]
+                            , B.viewFooter
+                        ]
+                }
+            Just entry ->
+                { title = "Leatherbound"
+                        , body =
+                            [ B.viewNavbar model
+                            , div [ class "container-fluid" ]
+                                [
+                                    div [class "row"] [
+                                    viewEntriesSidebar model,
+                                    if entry.id == "" then
+                                        viewCreateEntry model
+                                    else
+                                        if entries.editable then
+                                            viewEditableEntry model.url entry
+                                        else    
+                                            viewSingleEntry model.url entry
+                                ]   
+                                ]
+                            , B.viewFooter
+                        ]
+                }
+
+

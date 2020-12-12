@@ -12,4 +12,5 @@ RUN mkdir -p /opt/app/leatherbound_fe
 COPY elm.js /opt/app/leatherbound_fe
 COPY index.html /opt/app/leatherbound_fe
 
-EXPOSE 8000
+EXPOSE 80
+EXPOSE 443

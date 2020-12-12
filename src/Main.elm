@@ -54,6 +54,7 @@ init flags url key =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
+    -- URL
     T.LinkClicked urlRequest ->
       case urlRequest of
         Browser.Internal url ->
@@ -67,7 +68,8 @@ update msg model =
             newModel = { model | url = url }
         in
             updateUrlAction newModel url
-    
+
+    -- USER
     T.SetUsername username ->
         let 
             oldUser = model.user
@@ -93,6 +95,14 @@ update msg model =
 
     T.GotToken result ->
         A.getTokenCompleted model result
+    
+    T.ClickCreateUser ->
+        (model, UC.createUser model)
+    
+    T.CreatedUser result ->
+        UC.createdUserCompleted model result
+
+    -- ENTRIES
     
     T.GotEntries result ->
         EP.getEntriesCompleted model result
@@ -157,11 +167,7 @@ update msg model =
     T.CreatedEntry result ->
         EU.patchedEntryCompleted model result
     
-    T.ClickCreateUser ->
-        (model, UC.createUser model)
     
-    T.CreatedUser result ->
-        UC.createdUserCompleted model result
 
 
 -- SUBSCRIPTIONS
@@ -186,7 +192,7 @@ view model =
             "reg" ->
                 UC.viewCreateUser model
             _ ->
-                viewEntries model
+                EV.viewEntries model
 
 updateUrlAction : Model -> Url.Url -> (Model, Cmd Msg)
 updateUrlAction model url =
@@ -230,48 +236,5 @@ addEmtpyActiveEntry entries =
     {entries | activeEntry = Just (Entry.Entry "" "" "" "" "" ""), editable = True }
 
         
-
-
-viewEntries : Model -> Browser.Document Msg
-viewEntries model = 
-    let
-        entries = model.entries
-    in
-        case entries.activeEntry of
-            Nothing -> 
-                { title = "Leatherbound"
-                        , body =
-                            [ B.viewNavbar model
-                            , div [ class "container-fluid" ]
-                                [
-                                    div [class "row"] [
-                                    EV.viewEntriesSidebar model,
-                                    EV.viewEntryCards model
-                                    
-                                ]   
-                                ]
-                            , B.viewFooter
-                        ]
-                }
-            Just entry ->
-                { title = "Leatherbound"
-                        , body =
-                            [ B.viewNavbar model
-                            , div [ class "container-fluid" ]
-                                [
-                                    div [class "row"] [
-                                    EV.viewEntriesSidebar model,
-                                    if entry.id == "" then
-                                        EV.viewCreateEntry model
-                                    else
-                                        if entries.editable then
-                                            EV.viewEditableEntry model.url entry
-                                        else    
-                                            EV.viewSingleEntry model.url entry
-                                ]   
-                                ]
-                            , B.viewFooter
-                        ]
-                }
 
 
