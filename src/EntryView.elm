@@ -18,6 +18,8 @@ import Urls
 import Types exposing (Model)
 import Url exposing (Url)
 import Base as B
+import Markdown exposing (parseMarkdownString)
+
 
 getTimeOrderedEntryList : Entries -> List Entry
 getTimeOrderedEntryList entries =
@@ -41,7 +43,7 @@ viewEntryCard url entry =
         div [class "card-body"] [
             h2 [class "card-title"] [text entry.title],
             p [class "card-text text-muted h6"] [text <| String.concat [entry.author, " | ", (String.slice 0 10 entry.created_on)]],
-            p [class "card-text"] [text <| String.slice 0 199 entry.content],
+            p [class "card-text"] (parseMarkdownString <| String.slice 0 199 entry.content),
             a [href (getEntryHref url entry), class "btn btn-secondary"] [text "Read More"],
             a [href (getEntryEditHref url entry), class "btn btn-secondary"] [text "Edit"],
             button [Html.Events.onClick <| Types.ClickDeleteEntry entry, class "btn btn-secondary"] [text "Delete"]
@@ -91,7 +93,7 @@ viewSingleEntry url entry =
         div [class "card-body"] [
             h1 [class "card-title"] [text entry.title],
             p [class "text-muted"] [text (entry.author ++ " | " ++ (String.slice 0 10 entry.created_on))],
-            p [class "card-text"] [text entry.content],
+            p [class "card-text"] (parseMarkdownString entry.content),
             a [href (getEntryEditHref url entry), class "btn btn-secondary"] [text "Edit"],
             button [Html.Events.onClick <| Types.ClickDeleteEntry entry, class "btn btn-secondary"] [text "Delete"]
         ]
@@ -115,13 +117,14 @@ viewEditableEntry url entry =
                     Html.Events.onInput Types.UpdateEntryContent
                     ][]
                 ],
+            div [] ([h1 [] [text entry.title]] ++ (parseMarkdownString entry.content)),
             button [Html.Events.onClick Types.ClickSaveEntry, class "btn btn-secondary"] [text "Save"],
             a [href (getEntryHref url entry), class "btn btn-secondary"] [text "Cancel"]
         ]
     ]
 
-viewCreateEntry : Model -> Html Msg
-viewCreateEntry model =
+viewCreateEntry : Model -> Entry -> Html Msg
+viewCreateEntry model entry =
         div [class "col-md-8 mt-3 left"] [
         div [class "card-body", id "form"] [
             input [
@@ -137,6 +140,7 @@ viewCreateEntry model =
                     Html.Events.onInput Types.UpdateEntryContent
                     ][]
                 ],
+            div [] ([h1 [] [text entry.title]] ++ (parseMarkdownString entry.content)),
             button [Html.Events.onClick Types.ClickCreateEntry, class "btn btn-secondary"] [text "Save"],
             a [href (Urls.getBasePath model.url), class "btn btn-secondary"] [text "Cancel"]
         ]
@@ -172,7 +176,7 @@ viewEntries model =
                                     div [class "row"] [
                                     viewEntriesSidebar model,
                                     if entry.id == "" then
-                                        viewCreateEntry model
+                                        viewCreateEntry model entry
                                     else
                                         if entries.editable then
                                             viewEditableEntry model.url entry
