@@ -24,6 +24,9 @@ import EntryUpdate as EU
 import EntryDelete as ED
 import EntryCreate as EC
 import UserCreate as UC
+import DataScience.DataStructures exposing (Datascience)
+import DataScience.View exposing (viewInsights)
+import DataScience.SentimentPull exposing (getSentimentScoresCompleted, getSentimentScores)
 
 
 
@@ -45,8 +48,9 @@ init flags url key =
   let
     newUser = U.User "" "" "" "" ""
     entries = Entries "" Dict.empty Nothing False
+    datascience = Datascience []
   in
-    ( Model key url newUser "" entries, Cmd.none )
+    ( Model key url newUser "" entries datascience, Cmd.none )
 
 
 
@@ -167,6 +171,10 @@ update msg model =
     T.CreatedEntry result ->
         EU.patchedEntryCompleted model result
     
+    -- DATASCIENCE
+    T.GotSentimentScores result ->
+        getSentimentScoresCompleted model result
+    
     
 
 
@@ -186,13 +194,17 @@ view model =
         user = model.user
 
     in
-        case user.accessToken of
-            "" ->
-                A.viewAuth model
-            "reg" ->
-                UC.viewCreateUser model
+        case UrlParser.parse T.routeParser model.url of
+            Just T.InsightsRoute ->
+                viewInsights model
             _ ->
-                EV.viewEntries model
+                case user.accessToken of
+                    "" ->
+                        A.viewAuth model
+                    "reg" ->
+                        UC.viewCreateUser model
+                    _ ->
+                        EV.viewEntries model
 
 updateUrlAction : Model -> Url.Url -> (Model, Cmd Msg)
 updateUrlAction model url =
@@ -213,6 +225,10 @@ updateUrlAction model url =
                     user = model.user
                 in
                 ( { model | user = {user | accessToken = "reg"}}, Cmd.none)
+            
+            Just T.InsightsRoute ->
+                (model, getSentimentScores model)
+                
 
 removeActiveEntry : Entries -> Entries
 removeActiveEntry entries =

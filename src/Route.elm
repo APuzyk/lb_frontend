@@ -9,6 +9,7 @@ type Route
     | CreateEntry
     | CreateUser
     | Login
+    | Insights
 
 parser : Parser (Route -> a) a
 parser =
@@ -23,6 +24,7 @@ parser =
         , Parser.map Article (s "article" </> Slug.urlParser)
         , Parser.map NewArticle (s "editor")
         , Parser.map EditArticle (s "editor" </> Slug.urlParser)
+        , Parser.map Insights (s "")
         ]
 
 

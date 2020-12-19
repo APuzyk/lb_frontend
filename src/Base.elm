@@ -5,7 +5,7 @@ import Html.Attributes exposing (..)
 import User exposing (User)
 import Json.Decode exposing (bool)
 import Urls
-import Urls exposing (getBasePath, createEntryUrl)
+import Urls exposing (getBasePath, createEntryUrl, insightsUrl)
 import Types exposing (Model)
 
 viewNavbar : Model -> Html msg
@@ -23,7 +23,8 @@ viewNavbar model =
         nav [ class "navbar navbar-expand-lg navbar-light bg-light shadow" ] [
             div [class "container-fluid" ] [
                 a [ class "navbar-brand", href (getBasePath url) ] [ text "My Journal" ],
-                a [ class userElementClasses, href (createEntryUrl url) ] [ text "Write Entry" ]
+                a [ class userElementClasses, href (createEntryUrl url) ] [ text "Write Entry"],
+                a [ class userElementClasses, href (insightsUrl url) ] [ text "Insights" ]
             ]
         ]
 

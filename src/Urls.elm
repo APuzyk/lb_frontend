@@ -4,7 +4,18 @@ import Url exposing(Protocol, Url)
 import Url exposing (Protocol(..))
 import String exposing (fromInt)
 
+getBasePath : Url -> String
+getBasePath url = 
+    let
+        protocol = protocolToString url.protocol
+    in
+        case url.port_ of
+            Just portNum ->
+                protocol ++ url.host ++ ":" ++ (fromInt portNum)
+            Nothing ->
+                protocol ++ url.host 
 
+-- API URLS
 api : Url -> String
 api url =
     (getBasePath url) ++ "/api/"
@@ -30,6 +41,15 @@ entriesUrl url =
     in
         apiUrl ++ "entry/"
 
+sentimentUrl : Url -> String
+sentimentUrl url =
+    let
+        apiUrl = api url
+    in
+        apiUrl ++ "datascience/sentiment/"
+
+
+-- WEB APP URLS
 createEntryUrl : Url -> String
 createEntryUrl url =
     let
@@ -37,16 +57,13 @@ createEntryUrl url =
     in
         basePath ++ "/write_entry"
 
-getBasePath : Url -> String
-getBasePath url = 
+insightsUrl : Url -> String
+insightsUrl url =
     let
-        protocol = protocolToString url.protocol
+        basePath = getBasePath url
     in
-        case url.port_ of
-            Just portNum ->
-                protocol ++ url.host ++ ":" ++ (fromInt portNum)
-            Nothing ->
-                protocol ++ url.host 
+        basePath ++ "/insights"
+
 
 protocolToString : Protocol -> String
 protocolToString protocol =
@@ -59,3 +76,4 @@ protocolToString protocol =
 getRegisterPath : Url -> String
 getRegisterPath url = 
     (getBasePath url) ++ "/register/"
+

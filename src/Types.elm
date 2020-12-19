@@ -7,6 +7,7 @@ import Entry as E
 import Browser
 import Http
 import Entry exposing (Entry)
+import DataScience.DataStructures exposing (SentimentScore, Datascience)
 
 import Url.Parser exposing (Parser, (</>), int, map, oneOf, s, string)
 
@@ -18,6 +19,7 @@ type alias Model =
   , user: U.User
   , errorMsg: String
   , entries: E.Entries
+  , datascience: Datascience
   }
 
 type Msg
@@ -39,6 +41,7 @@ type Msg
   | CreatedEntry (Result Http.Error Entry)
   | ClickCreateUser
   | CreatedUser (Result Http.Error {id: Int, username: String})
+  | GotSentimentScores (Result Http.Error (List SentimentScore))
 
 type alias TokenStrings =
     { refreshToken : String
@@ -50,6 +53,7 @@ type Route
     | EditEntryRoute String String
     | CreateEntryRoute
     | CreateUserRoute
+    | InsightsRoute
 
 routeParser : Parser (Route -> a) a
 routeParser =
@@ -58,4 +62,5 @@ routeParser =
         , map EntryRoute (s "entry" </> string </> string)
         , map CreateEntryRoute (s "write_entry")
         , map CreateUserRoute (s "register")
+        , map InsightsRoute (s "insights")
         ]
