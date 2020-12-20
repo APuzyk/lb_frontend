@@ -6,7 +6,7 @@ import Jwt.Http
 import Urls exposing (entriesUrl)
 import Json.Decode as D exposing (..)
 import Entry exposing (Entry, Entries, TmpEntryList)
-import Auth exposing (httpErrorToString)
+import HttpHelpers exposing (httpErrorToString)
 import Dict exposing (Dict)
 import Urls exposing (sentimentUrl)
 import DataScience.DataStructures exposing(SentimentScore)

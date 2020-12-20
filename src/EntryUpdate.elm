@@ -7,7 +7,7 @@ import Entry exposing (Entry, Entries)
 import EntryPull as EP
 import EntryView exposing (getEntryHref)
 import Dict
-import Auth exposing (httpErrorToString)
+import HttpHelpers exposing (httpErrorToString)
 import Browser.Navigation as Nav
 import Urls
 updateEntry : Model -> Entry -> Cmd Msg

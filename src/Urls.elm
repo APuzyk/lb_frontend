@@ -28,6 +28,13 @@ registerUrl url =
     in
         apiUrl ++ "token/"
 
+tokenRefreshUrl : Url -> String
+tokenRefreshUrl url =
+    let
+        apiUrl = api url
+    in
+        apiUrl ++ "token/refresh/"
+
 createUserUrl : Url -> String
 createUserUrl url =
     let

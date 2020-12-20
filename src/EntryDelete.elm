@@ -7,11 +7,12 @@ import Entry exposing (Entry, Entries)
 import EntryPull as EP
 import EntryView exposing (getEntryHref)
 import Dict
-import Auth exposing (httpErrorToString)
+import HttpHelpers exposing (httpErrorToString)
 import Browser.Navigation as Nav
 import Urls
 import Jwt.Http as JHttp
 import Urls
+
 
 deleteEntry : Model -> Entry -> Cmd Msg
 deleteEntry model entry = 

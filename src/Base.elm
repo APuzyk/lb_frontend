@@ -13,18 +13,21 @@ viewNavbar model =
     let
         user = model.user
         url = model.url 
-        userElementClasses : String
-        userElementClasses =
+        userElementList : List(Html msg)
+        userElementList =
             if String.length user.accessToken > 0 then
-                "navbar-brand"
+                [
+                    li [class "nav-item"] [a [ class "nav-link", href (getBasePath url) ] [ text "My Journal" ]],
+                    li [class "nav-item"] [a [ class "nav-link", href (createEntryUrl url) ] [ text "Write Entry"]],
+                    li[class "nav-item"] [a [ class "nav-link", href (insightsUrl url) ] [ text "Insights" ]]
+                ]
             else
-                "d-none" 
+                []
     in
         nav [ class "navbar navbar-expand-lg navbar-light bg-light shadow" ] [
             div [class "container-fluid" ] [
-                a [ class "navbar-brand", href (getBasePath url) ] [ text "My Journal" ],
-                a [ class userElementClasses, href (createEntryUrl url) ] [ text "Write Entry"],
-                a [ class userElementClasses, href (insightsUrl url) ] [ text "Insights" ]
+                div [class "navbar-brand"] [text "Leatherbound"],
+                ul [class "nav navbar-nav mr-auto"] userElementList
             ]
         ]
 

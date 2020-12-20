@@ -105,6 +105,12 @@ update msg model =
     
     T.CreatedUser result ->
         UC.createdUserCompleted model result
+    
+    T.AttemptRefreshToken ->
+        (model, A.attemptRefreshToken model)
+    
+    T.GotAccessToken result ->
+        A.attemptRefreshTokenCompleted model result
 
     -- ENTRIES
     

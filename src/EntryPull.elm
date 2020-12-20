@@ -6,7 +6,7 @@ import Jwt.Http
 import Urls exposing (entriesUrl)
 import Json.Decode as D exposing (..)
 import Entry exposing (Entry, Entries, TmpEntryList)
-import Auth exposing (httpErrorToString)
+import HttpHelpers exposing (httpErrorToString)
 import Dict exposing (Dict)
 
 
@@ -26,9 +26,9 @@ getEntriesCompleted model result =
                     { model | entries = newEntries, errorMsg = "" }, 
                     Cmd.none
                 )
-        
         Err error ->
             ( { model | errorMsg = (httpErrorToString error) }, Cmd.none )
+            
 
 getEntries : Model -> Cmd Msg
 getEntries model =

@@ -8,6 +8,7 @@ import Browser
 import Http
 import Entry exposing (Entry)
 import DataScience.DataStructures exposing (SentimentScore, Datascience)
+import Json.Decode as Decode
 
 import Url.Parser exposing (Parser, (</>), int, map, oneOf, s, string)
 
@@ -25,11 +26,15 @@ type alias Model =
 type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
+  
   | SetUsername String
   | SetPassword String
   | SetPasswordAgain String
   | ClickRegisterUser
   | GotToken (Result Http.Error TokenStrings)
+  | AttemptRefreshToken
+  | GotAccessToken (Result Http.Error String)
+  
   | GotEntries (Result Http.Error E.TmpEntryList)
   | UpdateEntryContent String
   | UpdateEntryTitle String
@@ -41,6 +46,7 @@ type Msg
   | CreatedEntry (Result Http.Error Entry)
   | ClickCreateUser
   | CreatedUser (Result Http.Error {id: Int, username: String})
+  
   | GotSentimentScores (Result Http.Error (List SentimentScore))
 
 type alias TokenStrings =

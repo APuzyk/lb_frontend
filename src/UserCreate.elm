@@ -15,7 +15,8 @@ import Url
 import Browser.Navigation as Nav
 import Browser
 import Base as B
-import Auth exposing (httpErrorToString, authUser)
+import Auth exposing ( authUser)
+import HttpHelpers exposing (httpErrorToString)
 
 
 

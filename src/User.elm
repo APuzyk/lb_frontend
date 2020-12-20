@@ -16,4 +16,8 @@ userEncoder user =
     Encode.object
         [ ("username", Encode.string user.username)
         , ("password", Encode.string user.password)
-        ]     
+        ]
+
+emptyUser : User
+emptyUser =
+    User "" "" "" "" ""     

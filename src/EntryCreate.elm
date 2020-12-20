@@ -1,14 +1,13 @@
 module EntryCreate exposing (..)
 
 import Http
-import HttpHelpers as HttpH
+import HttpHelpers as HttpH exposing (httpErrorToString)
 import Json.Encode as Encode
 import Types exposing (Model, Msg)
 import Entry exposing (Entry, Entries)
 import EntryPull as EP
 import EntryView exposing (getEntryHref)
 import Dict
-import Auth exposing (httpErrorToString)
 import Browser.Navigation as Nav
 import Urls
 import Jwt.Http as JwtH

@@ -3,21 +3,27 @@ module Auth exposing (..)
 import Html exposing (..)
 
 import Html.Attributes exposing (..)
-import User exposing (User, userEncoder)
+import User exposing (User, userEncoder, emptyUser)
 import Types exposing (..)
 import Types as T
 import Html.Events exposing ( onInput, onClick )
 import Http
 import Json.Decode as Decode exposing (..)
+import Json.Encode as Encode
 import Urls exposing (registerUrl)
 import Url.Builder as Builder
 import Url
 import Browser.Navigation as Nav
 import Browser
 import Base as B
-import Urls exposing (createUserUrl)
-
-
+import Urls exposing (createUserUrl, tokenRefreshUrl)
+import HttpHelpers exposing (httpErrorToString)
+import Urls exposing (api)
+import Jwt exposing (getTokenExpirationMillis, JwtError)
+import Time exposing (millisToPosix)
+import Task
+import Process
+import Debug
 
 
 
@@ -32,8 +38,9 @@ getTokenCompleted model result =
                 newUrl = { oldUrl | path = "", query = Nothing, fragment = Nothing}
             in
                 ( 
-                    { model | user = newUser, errorMsg = "" }, 
-                    Nav.pushUrl model.key (Url.toString newUrl)
+                    { model | user = newUser, errorMsg = "" },
+                    Cmd.batch [ Nav.pushUrl model.key (Url.toString newUrl)
+                              , delayedRefreshCmd model]
                 )
         
         Err error ->
@@ -69,27 +76,6 @@ authUser model =
             , expect= Http.expectJson GotToken tokenDecoder
             }
 
-
-httpErrorToString : Http.Error -> String
-httpErrorToString error =
-    case error of
-        Http.BadUrl url ->
-            "The URL " ++ url ++ " was invalid"
-        Http.Timeout ->
-            "Unable to reach the server, try again"
-        Http.NetworkError ->
-            "Unable to reach the server, check your network connection"
-        Http.BadStatus 500 ->
-            "The server had a problem, try again later"
-        Http.BadStatus 400 ->
-            "Verify your information and try again"
-        Http.BadStatus 401 ->
-            "Incorrect Username or Password"
-        Http.BadStatus _ ->
-            "Unknown error"
-        Http.BadBody errorMessage ->
-            errorMessage
-
 viewAuth : Model -> Browser.Document Msg
 viewAuth model =
     { title = "Leatherbound"
@@ -109,7 +95,7 @@ authBoxView model =
     let
     -- If there is an error on authentication, show the error alert
         user = model.user
-        errorMsg = model.errorMsg
+        errorMsg = Debug.log "test log authboxview:" model.errorMsg
         url = model.url
         
         showError : String
@@ -157,3 +143,91 @@ authBoxView model =
                 a [ class "btn btn-link", href (Urls.getRegisterPath url)] [ text "Register" ]
                 ]
             ]
+
+-- REFRESH TOKEN ATTEMPT
+
+second : Int
+second =
+    1000
+
+delayedRefreshCmd : Model -> Cmd Msg
+delayedRefreshCmd model =
+    let
+        user = model.user
+        token = Debug.log "token: " user.accessToken
+    in 
+        tokenExpiryTask (getTokenExpirationMillis token)
+            |> Task.attempt (\_ -> AttemptRefreshToken)
+
+
+{-| A delay task that should end 30 seconds before the token is due to expire.
+If the token expiry is less than 1 minute away, the delay is set to half of the remaining
+time, which should be under 30 seconds.
+The delay will expire immediately if the token expiry is already in the past.
+-}
+tokenExpiryTask : Result JwtError Int -> Task.Task Never ()
+tokenExpiryTask timeoutResult =
+    case timeoutResult of 
+        Ok timeoutInt ->
+            let
+                timeout = millisToPosix (Debug.log " timeout result: " timeoutInt)
+                safeInterval =
+                    30 * second
+
+                delay posixBy posixNow =
+                    let
+                        by =
+                            Time.posixToMillis posixBy
+
+                        now =
+                            Time.posixToMillis posixNow
+                    in
+                        Basics.max ((by - now) // 2) (by - now - safeInterval) |> Basics.max 0
+            in
+                Time.now |> Task.andThen (\now -> toFloat (delay timeout now) |> Process.sleep)
+        Err error ->
+            Process.sleep 0
+
+
+
+attemptRefreshToken : Model -> Cmd Msg
+attemptRefreshToken model =
+    let
+        body = 
+            model.user
+                |> \user -> Encode.object [ ("refresh", Encode.string user.refreshToken)]
+                |> Http.jsonBody
+        
+        apiUrl = Debug.log "test log" (tokenRefreshUrl model.url)
+
+    in
+        Http.post
+            { url = apiUrl
+            , body = body
+            , expect = Http.expectJson GotAccessToken (Decode.field "access" Decode.string) }
+
+attemptRefreshTokenCompleted : Model -> Result Http.Error String -> ( Model, Cmd Msg )
+attemptRefreshTokenCompleted model result =
+    case result of
+        Ok newToken ->
+            let 
+                oldUser = model.user
+                newUser = {oldUser | password = "", accessToken = newToken }
+                newModel = { model | user = newUser, errorMsg = "" }
+
+            in
+                ( 
+                    newModel, 
+                    delayedRefreshCmd newModel
+                )
+        
+        Err error ->
+            let 
+                newUser = emptyUser
+                oldUrl = model.url
+                newUrl = { oldUrl | path = "", query = Nothing, fragment = Nothing}
+            in
+                ( 
+                    { model | user = newUser, errorMsg = "Your Session Expired, Please Log Back In" }, 
+                    Nav.pushUrl model.key (Url.toString newUrl)
+                )
