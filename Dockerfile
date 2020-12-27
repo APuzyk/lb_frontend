@@ -11,5 +11,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 RUN mkdir -p /opt/app/leatherbound_fe
 COPY elm.js /opt/app/leatherbound_fe
 COPY index.html /opt/app/leatherbound_fe
+RUN mkdir -p /opt/app/leatherbound_fe/static
+ADD static /opt/app/leatherbound_fe/static
 
 EXPOSE 8000

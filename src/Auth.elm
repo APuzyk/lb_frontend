@@ -23,7 +23,6 @@ import Jwt exposing (getTokenExpirationMillis, JwtError)
 import Time exposing (millisToPosix)
 import Task
 import Process
-import Debug
 
 
 
@@ -95,7 +94,7 @@ authBoxView model =
     let
     -- If there is an error on authentication, show the error alert
         user = model.user
-        errorMsg = Debug.log "test log authboxview:" model.errorMsg
+        errorMsg = model.errorMsg
         url = model.url
         
         showError : String
@@ -154,7 +153,7 @@ delayedRefreshCmd : Model -> Cmd Msg
 delayedRefreshCmd model =
     let
         user = model.user
-        token = Debug.log "token: " user.accessToken
+        token = user.accessToken
     in 
         tokenExpiryTask (getTokenExpirationMillis token)
             |> Task.attempt (\_ -> AttemptRefreshToken)
@@ -170,7 +169,7 @@ tokenExpiryTask timeoutResult =
     case timeoutResult of 
         Ok timeoutInt ->
             let
-                timeout = millisToPosix (Debug.log " timeout result: " timeoutInt)
+                timeout = millisToPosix timeoutInt
                 safeInterval =
                     30 * second
 
@@ -198,7 +197,7 @@ attemptRefreshToken model =
                 |> \user -> Encode.object [ ("refresh", Encode.string user.refreshToken)]
                 |> Http.jsonBody
         
-        apiUrl = Debug.log "test log" (tokenRefreshUrl model.url)
+        apiUrl = tokenRefreshUrl model.url
 
     in
         Http.post
