@@ -47,7 +47,7 @@ removeTags string =
 
 removePunctuation : String -> String
 removePunctuation string =
-    case Regex.fromString "/[^\\w\\s]|_/g" of
+    case Regex.fromString "[^\\w\\s]|_/g" of
         Nothing ->
             string
 
