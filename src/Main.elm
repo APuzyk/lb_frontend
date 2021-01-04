@@ -47,7 +47,7 @@ init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
   let
     newUser = U.User "" "" "" "" ""
-    entries = Entries "" Dict.empty Nothing False
+    entries = Entries (Just "") Dict.empty Nothing False
     datascience = Datascience []
   in
     ( Model key url newUser "" entries datascience, Cmd.none )

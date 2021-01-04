@@ -43,7 +43,7 @@ getEntries model =
 entriesDecoder : Decoder TmpEntryList
 entriesDecoder = 
     map2 TmpEntryList
-        (field "next" string)
+        (field "next" (nullable string))
         (field "results" listOfEntriesDecoder)
 
 

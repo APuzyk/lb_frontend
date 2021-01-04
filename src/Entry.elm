@@ -22,14 +22,14 @@ type alias Entry =
 type alias EntryId = String
 
 type alias Entries = 
-    { next_page: String
+    { next_page: Maybe String
     , entries: Dict String Entry
     , activeEntry: Maybe Entry
     , editable: Bool
     }
 
 type alias TmpEntryList =
-    { next_page : String
+    { next_page : Maybe String
     , entries : List Entry
     }
 
